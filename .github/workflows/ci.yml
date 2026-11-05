@@ -1,0 +1,74 @@
+name: ci
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "release = trained model from the GitHub Release; base = untrained pythia-70m (to show the gate failing)"
+        default: release
+        type: choice
+        options: [release, base]
+permissions:
+  contents: read
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install ruff==0.8.4 && ruff check .
+  unit-tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install pytest fastapi==0.115.6 httpx jsonschema==4.23.0 boto3==1.35.76 requests pydantic==2.10.3 pyyaml
+      - run: python -m pytest -q
+  evaluate:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r training/requirements.txt
+      - name: Download model from the GitHub Release
+        if: ${{ github.event.inputs.model != 'base' }}
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          gh release download model-v1 -p 'model-v1.tar.gz' -D .
+          mkdir -p model && tar -xzf model-v1.tar.gz -C model
+      - name: Predict on validation.jsonl
+        run: |
+          if [ "${{ github.event.inputs.model }}" = "base" ]; then
+            python scripts/predict.py --mode base --out predictions.jsonl
+          else
+            python scripts/predict.py --mode student --model-dir model --out predictions.jsonl
+          fi
+      - name: Score (report only)
+        run: python tools/score.py predictions.jsonl data/validation.jsonl --out report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval
+          path: |
+            predictions.jsonl
+            report.json
+  quality-gate:
+    needs: evaluate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {name: eval}
+      - run: python tools/score.py predictions.jsonl data/validation.jsonl --min-validity 95

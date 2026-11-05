@@ -1,0 +1,10 @@
+out/
+*.safetensors
+*.bin
+*.tar.gz
+.secrets/
+__pycache__/
+.venv/
+results/loadtest_*.csv.tmp
+.ruff_cache/
+.pytest_cache/

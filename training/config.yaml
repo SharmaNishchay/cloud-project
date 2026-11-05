@@ -1,0 +1,19 @@
+# Everything make train needs. Library versions are the pinned ones in training/requirements.txt.
+seed: 42
+learning_rate: 0.0003
+batch_size: 16
+epochs: 5
+max_seq_length: 128
+warmup_ratio: 0.05
+weight_decay: 0.01
+base_model: EleutherAI/pythia-70m
+num_records: 1500          # first 1500 cleaned records only
+train_file: data/train.jsonl
+version: v1
+output_dir: out/models/v1
+loss_csv: training/loss.csv
+libraries:
+  torch: 2.5.1
+  transformers: 4.46.3
+  numpy: 1.26.4
+  pyyaml: 6.0.2

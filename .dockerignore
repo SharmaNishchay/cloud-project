@@ -1,0 +1,6 @@
+.git
+out
+models
+results
+*.tar.gz
+*.safetensors
