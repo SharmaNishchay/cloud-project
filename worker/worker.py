@@ -31,7 +31,7 @@ def build_prompt(template, command):
 
 def ask_teacher(prompt):
     body = {"model": MODEL, "prompt": prompt, "stream": False,
-            "options": {"temperature": 0, "seed": 42, "num_predict": 120}}
+            "options": {"temperature": 0, "seed": 42, "num_predict": 120, "stop": ["\n\n"]}}
     for attempt in range(6):
         try:
             r = requests.post(f"{OLLAMA_URL}/api/generate", json=body, timeout=900)

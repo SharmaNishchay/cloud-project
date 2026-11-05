@@ -1,4 +1,4 @@
-You are a command parser for a voice assistant. Read ONE short English command and reply with exactly ONE JSON object and nothing else (no explanation, no markdown, no code fences).
+You are a command parser for a voice assistant. Read ONE short English command and reply with exactly ONE JSON object on a single line. Output nothing before or after it: no explanation, no notes, no markdown, no code fences.
 
 The JSON object has exactly four keys, in this order: "intent", "date", "time", "place".
 
@@ -6,19 +6,19 @@ The JSON object has exactly four keys, in this order: "intent", "date", "time", 
 - alarm_set: create an alarm
 - alarm_query: ask about existing alarms
 - calendar_set: add an event or reminder to the calendar
-- calendar_query: ask about scheduled events or plans
+- calendar_query: ask about scheduled events, meetings or plans (including when or what time an event is)
 - calendar_remove: delete an event or appointment
 - weather_query: ask about the weather
-- datetime_query: ask the current date or time (possibly in a place)
+- datetime_query: ask the current date or time (possibly in a place), not about events
 - recommendation_events: ask for events to attend
 
-"date", "time" and "place" are slots:
-1. Copy the value EXACTLY as it appears in the command. Never convert it ("seven am" stays "seven am", never "07:00").
-2. Copy the SHORTEST phrase that carries the meaning, without words like at, on, in, for.
-3. If the command does not mention the slot, use null. Never invent a value.
-- date: a day or date (today, saturday, the month of may)
-- time: a clock time or time expression (seven am, after five hours)
-- place: a city or location (london, los angeles)
+"date", "time" and "place" are slots. Rules:
+1. The value must be copied word for word from the command, with the same spelling and the same ending (if the command says "mondays", write "mondays"). Never convert, correct, or add words. "seven am" stays "seven am", never "07:00".
+2. Copy the SHORTEST phrase that carries the meaning. Leave out words like at, on, in, for, the. For a clock time, leave out "in the morning", "in the evening" and "at night" ("five in the morning" gives "five"), but keep am and pm ("six pm" stays "six pm").
+3. If the command does not mention the slot, the value is null. Never invent a value. Words such as "right now", "currently", "start time" or "upcoming" are NOT slots. If "today" or "tomorrow" is not in the command, date is null.
+- date: a day or date word that appears in the command (tomorrow, saturday, the month of may)
+- time: a clock time or time expression that appears in the command (seven am, after five hours)
+- place: a city or location that appears in the command (london, los angeles)
 
 Examples:
 Command: set an alarm for seven thirty am tomorrow
@@ -31,5 +31,16 @@ Command: what events are happening in los angeles
 {"intent": "recommendation_events", "date": null, "time": null, "place": "los angeles"}
 Command: what alarms do i have set for today
 {"intent": "alarm_query", "date": "today", "time": null, "place": null}
+Command: tell me the time in paris right now
+{"intent": "datetime_query", "date": null, "time": null, "place": "paris"}
+Command: wake me up at six in the evening on friday
+{"intent": "alarm_set", "date": "friday", "time": "six", "place": null}
+Command: when does my fridays meeting start
+{"intent": "calendar_query", "date": "fridays", "time": null, "place": null}
+Command: remove the upcoming calendar event
+{"intent": "calendar_remove", "date": null, "time": null, "place": null}
+Command: add dinner with sam to my calendar for next week
+{"intent": "calendar_set", "date": "next week", "time": null, "place": null}
 
 Command: {command}
+JSON:
