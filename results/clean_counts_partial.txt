@@ -1,11 +1,11 @@
-shard check: records 0 unique ids 0
+shard check: records 780 unique ids 780
 {
-  "input": 0,
-  "a": 0,
-  "b": 0,
-  "c": 0,
-  "d": 0,
-  "duplicates": 0,
-  "kept": 0
+  "input": 780,
+  "a": 2,
+  "b": 1,
+  "c": 6,
+  "d": 9,
+  "duplicates": 1,
+  "kept": 761
 }
-sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+sha256 831bf0e8e10ddbcbf948c821c8d69d37f6619f6a07a263dec557299fd661d878
