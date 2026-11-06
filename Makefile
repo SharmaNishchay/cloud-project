@@ -1,6 +1,6 @@
 PY        ?= python
 CONFIG    ?= training/config.yaml
-GH_REPO   ?= $(shell git config --get remote.origin.url 2>/dev/null | sed -E 's#.*github.com[:/]##; s#\.git$$##')
+GH_REPO   ?= $(shell git config --get remote.origin.url 2>/dev/null | sed -E 's|.*github.com[:/]||; s|\.git$$||')
 VERSION   ?= v1
 
 .PHONY: up down setup train test lint build deploy label clean-data publish eval loadtest

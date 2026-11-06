@@ -8,3 +8,5 @@ __pycache__/
 results/loadtest_*.csv.tmp
 .ruff_cache/
 .pytest_cache/
+training/loss_subset.csv
+backup/
