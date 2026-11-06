@@ -1,5 +1,5 @@
 # Two parallel workers (Indexed Job): pod 0 -> SHARD_INDEX=0, pod 1 -> SHARD_INDEX=1.
-# Teacher = Ollama on the laptop (OLLAMA_HOST=0.0.0.0 ollama serve), reached via host.k3d.internal.
+# Teacher = Ollama on the laptop (OLLAMA_HOST=0.0.0.0 ollama serve), reached via host.docker.internal.
 apiVersion: batch/v1
 kind: Job
 metadata: {name: teacher-label, namespace: pipeline}
@@ -19,7 +19,7 @@ spec:
             - name: SHARD_INDEX
               valueFrom: {fieldRef: {fieldPath: "metadata.annotations['batch.kubernetes.io/job-completion-index']"}}
             - {name: SHARD_COUNT, value: "2"}
-            - {name: OLLAMA_URL, value: "http://host.k3d.internal:11434"}
+            - {name: OLLAMA_URL, value: "http://host.docker.internal:11434"}
             - {name: S3_ENDPOINT, value: "http://seaweedfs.data.svc.cluster.local:8333"}
             - name: S3_ACCESS_KEY
               valueFrom: {secretKeyRef: {name: s3-creds, key: S3_ACCESS_KEY}}
