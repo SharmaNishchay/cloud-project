@@ -1,3 +1,11 @@
+# Cloud Computing (CS3081) Mini Project: distilled command parser on local Kubernetes
+
+**Name:** Nishchay Sharma
+**Roll number:** 230101030
+**GitHub repository:** https://github.com/SharmaNishchay/cloud-project
+
+---
+
 # Cloud Computing mini project - distilled command parser on local Kubernetes
 
 GitHub repo: <PUT YOUR REPO LINK HERE>   |   Name: <name>   Roll no.: <roll>
